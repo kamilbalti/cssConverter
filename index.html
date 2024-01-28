@@ -1,49 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <body>
-<textarea style="width: 99vw; height: 50vh" id="textArea"></textarea>
-<button onclick="change()">convert</button>
-<p id="demo"></p>
+  <textarea style="width: 98vw; height: 50vh; resize: none;" id="textArea"></textarea>
+  <button onclick="change()">convert</button>
+  <p id="demo"></p>
+  <script>
+    function convertCssToInlineStyle(cssString) {
+      var cssArray = cssString.replaceAll(';', '').split('\n')
+      cssArray = cssArray.filter(Boolean);
+      var inlineStyle = cssArray.map(function (property) {
+        var parts = property.split(':');
+        var propertyName = parts[0].trim();
+        var propertyValue = parts[1].trim();
+        propertyName = propertyName.replace(/-([a-z])/g, function (match, letter) {
+          return letter.toUpperCase();
+        });
+        return propertyName + ': \'' + propertyValue + '\',';
+      });
+      return inlineStyle.join('<br/>\n');
+    }
 
-<script>
-function convertCssToInlineStyle(cssString) {
-  // Split the CSS into individual properties
-  var cssArray = cssString.replaceAll(';', '').split('\n')
-
-  // Remove any empty strings from the array
-  cssArray = cssArray.filter(Boolean);
-
-  // Convert each CSS property to inline style format
-  var inlineStyle = cssArray.map(function(property) {
-    var parts = property.split(':');
-    var propertyName = parts[0].trim();
-    var propertyValue = parts[1].trim();
-
-    // Convert CSS property name to camelCase
-    propertyName = propertyName.replace(/-([a-z])/g, function(match, letter) {
-      return letter.toUpperCase();
-    });
-
-    return propertyName + ': \'' + propertyValue + '\'';
-  });
-
-  // Join the converted properties into a single string
-  return inlineStyle.join(',<br/>');
-}
-
-// Example usage
-// var cssString = `
-// border-radius: 16px;
-// background: var(--Secondary, #20353A);
-// box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-// `;
-
-const change = () => {
-    let cssString = document.getElementById('textArea').value
-    var inlineStyle = convertCssToInlineStyle(cssString);
-    document.getElementById('demo').innerHTML = inlineStyle
-}
-</script>
+    const change = () => {
+      let cssString = document.getElementById('textArea').value
+      var inlineStyle = convertCssToInlineStyle(cssString);
+      let output = document.getElementById('demo')
+      output.innerHTML = inlineStyle
+      var paragraph = document.getElementById('demo');
+      var textarea = document.createElement('textarea');
+      textarea.value = paragraph.textContent;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('The CSS is converted and copied successfully');
+    }
+  </script>
 
 </body>
+
 </html>
